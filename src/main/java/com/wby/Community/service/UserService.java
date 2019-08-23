@@ -1,7 +1,5 @@
 package com.wby.Community.service;
 
-
-import com.wby.Community.CommunityApplication;
 import com.wby.Community.dao.LoginTicketMapper;
 import com.wby.Community.dao.UserMapper;
 import com.wby.Community.entity.LoginTicket;
@@ -9,7 +7,6 @@ import com.wby.Community.entity.User;
 import com.wby.Community.util.CommunityConstant;
 import com.wby.Community.util.CommunityUtil;
 import com.wby.Community.util.MailClient;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -18,7 +15,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.thymeleaf.context.Context;
 
 import javax.mail.MessagingException;
-import javax.naming.*;
+
 import java.util.*;
 
 @Service
@@ -28,10 +25,13 @@ public class UserService implements CommunityConstant {
     private UserMapper userMapper;
     @Autowired
     private MailClient mailClient;
+    //模版引擎用于发邮件
     @Autowired
     private TemplateEngine templateEngine;
     @Autowired
     private LoginTicketMapper loginTicketMapper;
+    @Autowired
+    private LoginTicket loginTicket;
     //邮件中要项目名和域名所以进行注入，但是为固定值用@value
     @Value("${commuinty.path.domian}")
     private String domain;
@@ -45,6 +45,7 @@ public class UserService implements CommunityConstant {
         return userMapper.selectById(id);
     }
 
+    //注册功能
     public Map<String, Object> register(User user) throws IllegalAccessException, MessagingException {
         Map<String, Object> map = new HashMap<>();
         //空值处理
@@ -117,6 +118,7 @@ public class UserService implements CommunityConstant {
         }
     }
 
+
     // 登录功能  登录时我们的密码是明文与注册是存在数据库的md5加密的密码不同，要处理
     //最后一个是过期时间
     public Map<String, Object> login(String username, String password, int expiredSeconds) {
@@ -160,7 +162,7 @@ public class UserService implements CommunityConstant {
         loginTicket.setStatus(0);
         loginTicket.setExpired(new Date(System.currentTimeMillis() + expiredSeconds * 1000));
         loginTicketMapper.insertLoginTicket(loginTicket);
-//  放进map给客户端
+//  放进map给客户端, 客户端保存，然后下次登录使用
         map.put("ticket", loginTicket.getTicket());
         return map;
     }
@@ -171,8 +173,21 @@ public class UserService implements CommunityConstant {
     }
 
     public int updateHeader(int userId, String headUrl) {
-       return  userMapper.updateHeader(userId, headUrl);
+        return userMapper.updateHeader(userId, headUrl);
 
+    }
+
+    public int updatePassWord(int userId, String password) {
+        return userMapper.updatePassword(userId, password);
+
+    }
+
+    public LoginTicket findLoginTicket(String ticket) {
+        return loginTicketMapper.selectByTicket(ticket);
+    }
+
+    public User findUserByName(String username) {
+        return userMapper.selectByName(username);
     }
 }
 
@@ -181,26 +196,3 @@ public class UserService implements CommunityConstant {
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-}

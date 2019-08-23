@@ -5,34 +5,51 @@
 <mapper namespace="com.wby.Community.dao.CommentMapper">
 
     <sql id="selectFields">
-        id, user_id, entity_type, entity_id, target_id, content, status, create_time
+        id, user_id, title, content, type, status, create_time, comment_count, score
     </sql>
 
     <sql id="insertFields">
-        user_id, entity_type, entity_id, target_id, content, status, create_time
+        user_id, title, content, type, status, create_time, comment_count, score
     </sql>
 
-    <select id="selectCommentsByEntity" resultType="Comment">
+    <select id="selectDiscussPosts" resultType="DiscussPost">
         select <include refid="selectFields"></include>
-        from comment
-        where status = 0
-        and entity_type = #{entityType}
-        and entity_id = #{entityId}
-        order by create_time asc
+        from discuss_post
+        where status != 2
+        <if test="userId!=0">
+            and user_id = #{userId}
+        </if>
+        order by type desc, create_time desc
         limit #{offset}, #{limit}
     </select>
 
-    <select id="selectCountByEntity" resultType="int">
+    <select id="selectDiscussPostRows" resultType="int">
         select count(id)
-        from comment
-        where status = 0
-        and entity_type = #{entityType}
-        and entity_id = #{entityId}
+        from discuss_post
+        where status != 2
+        <if test="userId!=0">
+            and user_id = #{userId}
+        </if>
     </select>
 
-    <insert id="insertComment" parameterType="Comment">
-        insert into comment(<include refid="insertFields"></include>)
-        values(#{userId},#{entityType},#{entityId},#{targetId},#{content},#{status},#{createTime})
+    <insert id="insertDiscussPost" parameterType="DiscussPost">
+        insert into discuss_post(<include refid="insertFields"></include>)
+        values(#{userId},#{title},#{content},#{type},#{status},#{createTime},#{commentCount},#{score})
     </insert>
+
+    <select id="selectDiscussPostById" resultType="DiscussPost">
+        select <include refid="selectFields"></include>
+        from discuss_post
+        where id = #{id}
+    </select>
+
+    <update id="updateCommentCount">
+        update discuss_post set comment_count = #{commentCount} where id = #{id}
+    </update>
+    <select id="selectCommentById" resultType="Comment">
+        select <include refid="selectFields"></include>
+        from comment
+        where identity =#{id}
+    </select>
 
 </mapper>

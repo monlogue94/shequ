@@ -2,7 +2,6 @@ package com.wby.Community.config;
 
 import com.google.code.kaptcha.Producer;
 import com.google.code.kaptcha.impl.DefaultKaptcha;
-import jdk.nashorn.internal.runtime.regexp.joni.Config;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -12,8 +11,8 @@ import java.util.Properties;
 //配置类用@configurstyion声明
 
 @Configuration
-public class KaptchaConfig {
-
+public class  KaptchaConfig {
+     //bean是方法名
     @Bean
     public Producer kaptchaProducer() {
         Properties properties = new Properties();

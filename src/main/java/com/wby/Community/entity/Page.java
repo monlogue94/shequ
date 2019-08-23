@@ -4,7 +4,7 @@ package com.wby.Community.entity;
  * 封装分页相关的信息.
  */
 public class Page {
-
+//告诉服务器页面存入信息
     // 当前页码
     private int current = 1;
     // 显示上限
@@ -13,7 +13,7 @@ public class Page {
     private int rows;
     // 查询路径(用于复用分页链接)
     private String path;
-
+//private表示是私有的要有getset方法来访问
     public int getCurrent() {
         return current;
     }

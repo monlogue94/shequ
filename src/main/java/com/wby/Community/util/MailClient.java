@@ -16,36 +16,26 @@ import javax.mail.internet.MimeMessage;
 @Component
 public class MailClient {
 
-    private  final static Logger logger=  LoggerFactory.getLogger(MailClient.class);
-  @Autowired
-    private JavaMailSender javaMailSender ;
+
+    @Autowired
+    private JavaMailSender javaMailSender;
 
 
-
-
-   // 把配置文件中的发件人给from变量
+    // 把配置文件中的发件人给from变量
     @Value("${spring.mail.username}")
     private String from;
 
 
+    public void sendMail(String to, String subject, String content) throws MessagingException {
 
-    public  void sendMail(String  to,String subject, String content) throws MessagingException {
-
-        MimeMessage message =javaMailSender.createMimeMessage();
-        MimeMessageHelper helper =new MimeMessageHelper(message );
-        helper.setFrom( from);
-        helper .setTo(to);
-        helper .setSubject(subject );
+        MimeMessage message = javaMailSender.createMimeMessage();
+        MimeMessageHelper helper = new MimeMessageHelper(message);
+        helper.setFrom(from);
+        helper.setTo(to);
+        helper.setSubject(subject);
         //支持发送html邮件
-        helper .setText(content,true);
+        helper.setText(content, true);
         javaMailSender.send(helper.getMimeMessage());
-
-
-
-
-
-
-
 
 
     }

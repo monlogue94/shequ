@@ -4,6 +4,7 @@ import com.wby.Community.dao.DiscussPostMapper;
 import com.wby.Community.entity.DiscussPost;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.web.util.HtmlUtils;
 
 import javax.annotation.Resource;
 import java.util.List;
@@ -25,16 +26,22 @@ public class DiscussPostService {
 
 
    //发布帖子
-    public int   addDiscussPost(DiscussPost  discussPost ) throws IllegalAccessException {
-        if (discussPost==null){
+    public int   addDiscussPost(DiscussPost  post) throws IllegalAccessException {
+        if (post ==null){
             throw  new IllegalAccessException(" 参数不能为空");
         }
-        return discussPostMapper.insertDiscussPost(discussPost );
+        post .setTitle(HtmlUtils.htmlEscape(post .getTitle()));
+        post .setContent(HtmlUtils.htmlEscape(post .getContent()));
+        return discussPostMapper.insertDiscussPost(post  );
 
     }
     //查询帖子详情
     public DiscussPost findDiscussPostById(int id){
         return discussPostMapper .selectDiscussPostById(id);
+    }
+
+    public int updateCommentCount(int id,int commentCount){
+        return discussPostMapper.updateCommentCount(id,commentCount );
     }
 
 }
